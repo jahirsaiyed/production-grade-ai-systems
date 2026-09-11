@@ -1,0 +1,36 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lab:
+          - ml-track-fraud-detection
+          - llm-track-qa-service
+    defaults:
+      run:
+        working-directory: modules/week-01-prototype-to-production/labs/${{ matrix.lab }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Generate model artifact
+        if: matrix.lab == 'ml-track-fraud-detection'
+        run: python train_model.py
+
+      - name: Run tests with coverage
+        run: pytest --cov=app --cov-report=term-missing --cov-fail-under=80
