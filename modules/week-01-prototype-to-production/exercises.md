@@ -7,8 +7,8 @@ reference implementation is the lab's own code.
 
 Edit one byte of `labs/ml-track-fraud-detection/artifacts/model.joblib` (then
 revert it) and start the service. **Acceptance criteria:** the service fails
-to start (or `/readyz` reports not-ready) with a clear `ArtifactIntegrityError`
-message, not a silent wrong prediction.
+to start with a clear `ArtifactIntegrityError` message in the logs (uvicorn
+will report "Application startup failed") — not a silent wrong prediction.
 
 ## Exercise 2: Make the flaky feature store flakier
 

@@ -57,8 +57,10 @@ make docker-run
 ## What to notice
 
 - `manifest.json` is checked against the model file's sha256 at startup — see
-  `app/adapters/model_store.py`. Corrupt the model file and watch `/readyz`
-  report `not-ready`.
+  `app/adapters/model_store.py`. Corrupt the model file and the service will
+  fail to start entirely (uvicorn reports "Application startup failed" with a
+  clear `ArtifactIntegrityError` in the logs) rather than silently serving wrong
+  predictions.
 - `app/adapters/feature_store.py` randomly fails (`FEATURE_STORE_FAILURE_RATE`
   in `.env`) to give retries (`tenacity`) something real to do.
 - Every log line is JSON and carries the same `request_id` as the response's
