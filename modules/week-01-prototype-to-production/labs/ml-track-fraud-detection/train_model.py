@@ -8,6 +8,7 @@ publish a new model version.
 """
 import hashlib
 import json
+import platform
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -50,7 +51,7 @@ def main() -> None:
         "created_at": datetime.now(timezone.utc).isoformat(),
         "git_commit": _git_commit(),
         "sha256": digest,
-        "python_version": "3.11",
+        "python_version": platform.python_version(),
         "key_dependencies": {"scikit-learn": sklearn.__version__},
     }
     (ARTIFACT_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2))
