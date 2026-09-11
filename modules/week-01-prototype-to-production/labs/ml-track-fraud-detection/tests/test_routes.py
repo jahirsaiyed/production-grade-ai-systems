@@ -1,5 +1,8 @@
+from unittest.mock import patch
+
 from fastapi.testclient import TestClient
 
+from app.adapters.feature_store import FeatureStoreUnavailable
 from app.main import app
 
 
@@ -43,3 +46,21 @@ def test_score_rejects_negative_amount():
             },
         )
     assert response.status_code == 422
+
+
+def test_score_returns_503_when_feature_store_unavailable():
+    with TestClient(app) as client:
+        with patch(
+            "app.api.routes.fetch_features",
+            side_effect=FeatureStoreUnavailable("simulated outage"),
+        ):
+            response = client.post(
+                "/score",
+                json={
+                    "transaction_id": "txn-1",
+                    "amount": 42.5,
+                    "merchant_category": "electronics",
+                },
+            )
+    assert response.status_code == 503
+    assert "detail" in response.json()
