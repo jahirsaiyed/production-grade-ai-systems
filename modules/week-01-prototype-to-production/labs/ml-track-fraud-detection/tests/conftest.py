@@ -1,8 +1,11 @@
 import json
 import os
+import tempfile
+from pathlib import Path
 
 import joblib
-import pytest
+
+from app.adapters.model_store import _sha256_of
 
 
 class _StubModel:
@@ -10,21 +13,16 @@ class _StubModel:
         return [[0.9, 0.1]]
 
 
-@pytest.fixture(scope="session", autouse=True)
-def _artifact_dir(tmp_path_factory):
-    artifact_dir = tmp_path_factory.mktemp("artifacts")
-    model_path = artifact_dir / "model.joblib"
-    joblib.dump(_StubModel(), model_path)
+_artifact_dir = Path(tempfile.mkdtemp(prefix="ml-lab-test-artifacts-"))
+_model_path = _artifact_dir / "model.joblib"
+joblib.dump(_StubModel(), _model_path)
 
-    from app.adapters.model_store import _sha256_of
+_manifest = {
+    "artifact_version": "0.1.0-test",
+    "sha256": _sha256_of(_model_path),
+}
+(_artifact_dir / "manifest.json").write_text(json.dumps(_manifest))
 
-    manifest = {
-        "artifact_version": "0.1.0-test",
-        "sha256": _sha256_of(model_path),
-    }
-    (artifact_dir / "manifest.json").write_text(json.dumps(manifest))
-
-    os.environ["ARTIFACT_DIR"] = str(artifact_dir)
-    # Deterministic tests: never let the simulated flaky feature store fail.
-    os.environ["FEATURE_STORE_FAILURE_RATE"] = "0"
-    return artifact_dir
+os.environ["ARTIFACT_DIR"] = str(_artifact_dir)
+# Deterministic tests: never let the simulated flaky feature store fail.
+os.environ["FEATURE_STORE_FAILURE_RATE"] = "0"
