@@ -1,0 +1,10 @@
+{
+  "artifact_version": "0.1.0",
+  "created_at": "2026-09-11T18:19:05.802795+00:00",
+  "git_commit": "acf94430a1aa7556c9f712b9a6a787ce4d2fb584",
+  "sha256": "3edc3cf1c6552e07e7907b2a5ee525cedcb92d57bbf87da80598df77f69168bd",
+  "python_version": "3.11",
+  "key_dependencies": {
+    "scikit-learn": "1.9.0"
+  }
+}
