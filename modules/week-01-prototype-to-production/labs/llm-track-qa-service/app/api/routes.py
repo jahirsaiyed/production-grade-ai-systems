@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Request
 
 from app.adapters.llm_client import LlmCallError
@@ -5,6 +7,7 @@ from app.api.schemas import AskRequest, AskResponse
 from app.domain.qa import build_prompt
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @router.post("/ask", response_model=AskResponse)
@@ -13,7 +16,8 @@ def ask(payload: AskRequest, request: Request) -> AskResponse:
     prompt = build_prompt(payload.question)
     try:
         answer = client.complete(prompt)
-    except LlmCallError:
+    except LlmCallError as exc:
+        logger.warning(f"llm call failed after retries, serving fallback answer: {exc}")
         answer = "The assistant is temporarily unavailable. Please try again."
     return AskResponse(
         question=payload.question,

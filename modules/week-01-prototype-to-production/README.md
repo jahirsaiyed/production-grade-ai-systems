@@ -129,9 +129,10 @@ toolkit for handling that:
 - **Retries** — automatically re-attempt a failed call, usually with a cap
   and a wait between attempts, because many failures are transient. Both
   labs implement this concretely with `tenacity`: `fetch_features()` in the
-  fraud lab's `adapters/feature_store.py` retries up to 3 times
-  (`@retry(stop=stop_after_attempt(3), wait=wait_fixed(0.1))`) before giving
-  up, and `LlmClient.complete()` in the Q&A lab's `adapters/llm_client.py`
+  fraud lab's `adapters/feature_store.py` attempts the call up to 3 times
+  total before giving up
+  (`@retry(stop=stop_after_attempt(3), wait=wait_fixed(0.1))`) — that's the
+  first try plus 2 retries, and `LlmClient.complete()` in the Q&A lab's `adapters/llm_client.py`
   uses the identical pattern around the OpenAI call.
 - **Timeouts** — bound how long you'll wait for a dependency before giving up,
   so one slow call can't stall your whole service; neither lab configures an
@@ -143,16 +144,22 @@ toolkit for handling that:
   labs, but essential once you need to smooth out load spikes or run batch
   jobs (see the event-driven row in the table above).
 - **Graceful degradation** — when a dependency is unavailable, return a
-  degraded-but-useful response instead of an error. The Q&A lab's `POST /ask`
-  route demonstrates this directly: if `client.complete()` raises
-  `LlmCallError` after exhausting retries, the route catches it and returns
-  a fallback answer ("The assistant is temporarily unavailable. Please try
-  again.") with a normal 200 response, rather than surfacing a 500. The
-  fraud lab's `/score` route, by contrast, does *not* catch
-  `FeatureStoreUnavailable` — it's a deliberate contrast so you can see both
-  strategies: fail loudly when a wrong answer would be dangerous (fraud
-  scoring), degrade gracefully when a soft answer is acceptable (a chat
-  reply).
+  degraded-but-useful response instead of an error, when a soft answer is an
+  acceptable substitute for a real one. The Q&A lab's `POST /ask` route
+  demonstrates this directly: if `client.complete()` raises `LlmCallError`
+  after exhausting retries, the route catches it, logs a warning, and
+  returns a fallback answer ("The assistant is temporarily unavailable.
+  Please try again.") with a normal 200 response, rather than surfacing a
+  500 — a "fail soft" strategy that fits a conversational UI, where a
+  degraded answer beats an error page. The fraud lab's `/score` route takes
+  the opposite approach on purpose: it *does* catch `FeatureStoreUnavailable`
+  after retries are exhausted, but rather than degrading, it logs the error
+  through the structured logger (so it's visible with a request ID) and
+  returns an explicit `503 Service Unavailable`. That's "fail loud, but
+  cleanly" — appropriate here because a fraud score computed without real
+  features wouldn't be a harmless degraded answer, it would be an actively
+  wrong one, and silently returning it (or guessing) is worse than telling
+  the caller to retry.
 
 ## REST vs. gRPC; streaming responses
 
@@ -286,6 +293,15 @@ serve real traffic right now?" — it returns `{"status": "ready"}` only once
 the fraud lab's model (or the Q&A lab's LLM client) has finished loading, and
 `{"status": "not-ready"}` otherwise, which is what an orchestrator or load
 balancer uses to decide whether to route traffic to this instance yet.
+
+In practice, in this week's two labs, `/readyz`'s not-ready branch is
+defensive code that isn't currently reachable — the ML lab fails the whole
+process at startup on artifact corruption rather than starting in a
+not-ready state (see the lab's own README), and the LLM lab's client can't
+fail to construct. A production system with a slower-loading dependency
+(e.g. downloading a large model from remote storage) is where this branch
+would actually fire — see if you can design a scenario for one of these
+labs where it would.
 
 ## Model serialization: versioned artifacts with sha256 metadata
 

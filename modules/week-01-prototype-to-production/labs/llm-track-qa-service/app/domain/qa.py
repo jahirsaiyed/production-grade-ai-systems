@@ -1,17 +1,8 @@
-from dataclasses import dataclass
-
 MAX_QUESTION_LENGTH = 500
 
 
 class QuestionTooLongError(ValueError):
     """Raised when a question exceeds the allowed length."""
-
-
-@dataclass(frozen=True)
-class Answer:
-    question: str
-    answer: str
-    source: str  # "mock" or "llm"
 
 
 def build_prompt(question: str) -> str:

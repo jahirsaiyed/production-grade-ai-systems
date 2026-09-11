@@ -12,12 +12,13 @@ will report "Application startup failed") — not a silent wrong prediction.
 
 ## Exercise 2: Make the flaky feature store flakier
 
-Raise `feature_store_failure_rate` in `.env` for the fraud-detection lab to
+Raise `FEATURE_STORE_FAILURE_RATE` in `.env` for the fraud-detection lab to
 `0.9` and call `/score` several times. **Acceptance criteria:** you can
-observe (via logs or by adding a print) that `fetch_features` is retried up
-to 3 times before giving up, and that a request occasionally still fails after
-exhausting retries — explain in your own words why that's the correct
-tradeoff versus retrying forever.
+observe (via logs or by adding a print) that `fetch_features` attempts the
+call up to 3 times total (the first try plus 2 retries) before giving up,
+and that a request occasionally still fails after exhausting retries —
+explain in your own words why that's the correct tradeoff versus retrying
+forever.
 
 ## Exercise 3: Add a request-size guardrail
 

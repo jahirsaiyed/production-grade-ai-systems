@@ -28,9 +28,5 @@ jobs:
       - name: Lint
         run: ruff check .
 
-      - name: Generate model artifact
-        if: matrix.lab == 'ml-track-fraud-detection'
-        run: python train_model.py
-
       - name: Run tests with coverage
         run: pytest --cov=app --cov-report=term-missing --cov-fail-under=80

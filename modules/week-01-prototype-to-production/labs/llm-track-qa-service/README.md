@@ -55,6 +55,11 @@ make docker-build
 make docker-run
 ```
 
+No `.env` file is required — `make docker-run` passes `OPENAI_API_KEY`
+through from your host shell's environment if it's set (`-e OPENAI_API_KEY`),
+and simply omits it otherwise, in which case the container runs in mock mode
+just like `make run` does.
+
 ## What to notice
 
 - The mock/real switch is entirely a config decision (`app/adapters/llm_client.py`),

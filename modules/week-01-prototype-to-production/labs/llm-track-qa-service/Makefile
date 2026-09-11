@@ -13,4 +13,4 @@ docker-build:
 	docker build -t qa-service .
 
 docker-run:
-	docker run --rm -p 8000:8000 --env-file .env qa-service
+	docker run --rm -p 8000:8000 -e OPENAI_API_KEY qa-service
