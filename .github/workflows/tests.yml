@@ -10,11 +10,12 @@ jobs:
     strategy:
       matrix:
         lab:
-          - ml-track-fraud-detection
-          - llm-track-qa-service
+          - modules/week-01-prototype-to-production/labs/ml-track-fraud-detection
+          - modules/week-01-prototype-to-production/labs/llm-track-qa-service
+          - modules/week-02-data-and-model-pipelines/labs/llm-track-rag-service
     defaults:
       run:
-        working-directory: modules/week-01-prototype-to-production/labs/${{ matrix.lab }}
+        working-directory: ${{ matrix.lab }}
     steps:
       - uses: actions/checkout@v4
 
