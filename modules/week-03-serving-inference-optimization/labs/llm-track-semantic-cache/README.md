@@ -1,7 +1,9 @@
 # LLM Track Lab: Semantic Cache
 
 Answers questions from a small corpus of company documents, with citations, using hybrid
-BM25 + dense-embedding retrieval. Companion to [Week 3's concept README](../../README.md).
+BM25 + dense-embedding retrieval, now with a semantic cache in front so repeated or
+near-identical questions skip retrieval and the LLM call entirely. Companion to
+[Week 3's concept README](../../README.md).
 
 ## What's here
 
@@ -88,7 +90,13 @@ make benchmark
 
 Measures the latency of a cache miss (a brand-new question, requiring retrieval + an LLM call)
 vs. a cache hit (a repeated question, answered immediately from the cache) and reports the
-speedup ratio (p50 latency).
+speedup ratio (p50 and p95 latency).
+
+**Mock-mode caveat:** with the default mock embedder/LLM client (no `OPENAI_API_KEY`
+configured), both the "LLM call" and the retrieval step are near-free in-process stubs, so
+the measured latency delta is small by construction — there's no real network latency to
+save. Until a real API key is configured, the cost-savings estimate below is the more
+meaningful number.
 
 It also prints an illustrative cost estimate for the number of LLM calls avoided — genuinely
 meaningful once a real `OPENAI_API_KEY` is configured, since a cache hit skips the real API

@@ -17,11 +17,13 @@ Lower the threshold to `0.5` — either by changing `DEFAULT_SIMILARITY_THRESHOL
 `llm-track-semantic-cache/app/domain/semantic_cache.py`, or by passing `threshold=0.5` explicitly
 wherever `SemanticCache` is constructed (`app/main.py`) — restart the service, and ask two specific,
 genuinely unrelated questions back to back: "How many vacation days do I get?" followed by "How do
-I roll back a deploy?" (these two don't share enough distinctive tokens to falsely match even at a
-low threshold under the mock embedder, unlike some seemingly-unrelated pairs that can still score
-above a lowered threshold purely from shared stopwords like "the"/"how"/"do"/"i"). **Acceptance
-criteria:** the second question now incorrectly returns `cache_hit: true` with the first question's
-answer — explain why a too-low threshold is worse than no cache at all for a real product.
+I roll back a deploy?" (under the mock embedder this pair only shares generic/stopword tokens like
+"how"/"do"/"i" — not any meaningfully related content — which lands their cosine similarity around
+~0.57: comfortably below the default 0.95 threshold, so no false match happens normally, but above
+a deliberately lowered threshold of 0.5, which is exactly what makes the false-positive hit
+reproducible for this exercise). **Acceptance criteria:** the second question now incorrectly
+returns `cache_hit: true` with the first question's answer — explain why a too-low threshold is
+worse than no cache at all for a real product.
 
 ## Exercise 3: Measure the semantic cache's memory growth
 
