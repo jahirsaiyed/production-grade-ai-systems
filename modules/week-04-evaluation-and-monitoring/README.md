@@ -30,8 +30,9 @@ regressions before they ship, online catches the failures that only show up
 once the model meets real, unlabeled traffic. Both of this week's labs are
 offline evaluation only — `ml-track-eval-harness` scores a trained model
 against a held-out labeled test set, and `llm-track-eval-harness` scores
-answers against a fixed set of question/expected-source pairs — neither lab
-touches live traffic.
+which document gets retrieved against a fixed set of question/expected-source
+pairs (citation-match rate), not the LLM's generated answer text — neither
+lab touches live traffic.
 
 ## Classification metrics (precision, recall, F1, ROC-AUC vs. PR-AUC)
 
@@ -188,9 +189,11 @@ percentage of real traffic and compares outcomes, and **full rollout** only
 happens once the canary looks safe — with a **rollback gate** at each stage
 automatically reverting to the previous version if a monitored metric
 regresses. This course's labs implement a simplified, single-stage version of
-that same rollback-gate idea: `gate.py` in each lab defines the metric
-thresholds a model or pipeline must clear, and `tests/test_gate.py` enforces
-them as a normal pytest check — so this repo's CI already refuses to merge a
+that same rollback-gate idea: each lab's `baseline_metrics.json` is the
+committed, reviewable, diffable file that defines the metric thresholds a
+model or pipeline must clear; `gate.py` is just the comparator that checks a
+fresh eval report against it, and `tests/test_gate.py` enforces that check as
+a normal pytest check — so this repo's CI already refuses to merge a
 change the moment either lab's gate test fails, which is the same underlying
 principle (don't let a regression reach production) that real progressive
 delivery builds on across multiple live traffic stages instead of one CI

@@ -1,4 +1,5 @@
 from eval_harness import run
+from eval_set import EVAL_EXAMPLES
 
 
 def test_run_produces_report_with_citation_match_rate():
@@ -8,4 +9,4 @@ def test_run_produces_report_with_citation_match_rate():
     assert "citation_match_rate" in report["metrics"]
     assert 0.0 <= report["metrics"]["citation_match_rate"] <= 1.0
     assert len(report["results"]) == report["n_examples"]
-    assert report["n_examples"] == 8
+    assert report["n_examples"] == len(EVAL_EXAMPLES)

@@ -31,6 +31,7 @@ def judge_answer(
 def main() -> None:
     import os
 
+    from dotenv import load_dotenv
     from rank_bm25 import BM25Okapi
 
     from app.adapters.embeddings import EmbeddingClient
@@ -38,6 +39,7 @@ def main() -> None:
     from eval_harness import ARTIFACT_DIR, answer_question
     from eval_set import EVAL_EXAMPLES
 
+    load_dotenv()
     api_key = os.environ.get("OPENAI_API_KEY") or None
     llm_client = LlmClient(api_key=api_key)
     embedding_client = EmbeddingClient(api_key=api_key)

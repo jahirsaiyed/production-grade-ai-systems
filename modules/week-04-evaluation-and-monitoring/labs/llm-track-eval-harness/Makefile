@@ -16,4 +16,4 @@ gate:
 	python gate.py
 
 test:
-	pytest --cov=app --cov-report=term-missing
+	pytest --cov=app --cov-report=term-missing --cov-fail-under=80

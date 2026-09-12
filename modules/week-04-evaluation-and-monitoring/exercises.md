@@ -37,3 +37,7 @@ Add one more `{"question": ..., "expected_source": ...}` entry to
 `llm-track-eval-harness/eval_set.py` for a question you make up about one of the three corpus docs,
 then run `make eval`. **Acceptance criteria:** the reported `citation_match_rate` changes (it's
 now out of 9 examples, not 8), and you can state whether your new example was answered correctly.
+Note: if your new example changes the measured rate enough to cross the committed
+`baseline_metrics.json` threshold, `make test`'s gate check may then fail — that's expected, not a
+bug, and mirrors the real-world case where adding eval examples legitimately moves the bar; adjust
+`baseline_metrics.json` the same way the lab's own baseline was derived (re-run and measure).

@@ -11,6 +11,7 @@ from rank_bm25 import BM25Okapi
 
 from app.adapters.embeddings import EmbeddingClient
 from app.adapters.index_store import load_index
+from app.domain.rag import build_citations
 from app.domain.retrieval import hybrid_search
 from app.domain.tokenizing import tokenize
 from eval_set import EVAL_EXAMPLES
@@ -30,9 +31,7 @@ def answer_question(
     return {
         "question": question,
         "top_source": top_source,
-        "citations": [
-            {"source": r.chunk.source, "chunk_id": r.chunk.chunk_id} for r in retrieved
-        ],
+        "citations": build_citations(retrieved),
     }
 
 
