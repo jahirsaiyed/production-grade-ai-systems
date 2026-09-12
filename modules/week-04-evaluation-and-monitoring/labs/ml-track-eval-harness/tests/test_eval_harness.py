@@ -1,4 +1,4 @@
-from eval_harness import HELD_OUT_RANDOM_STATE, run
+from eval_harness import HELD_OUT_SPLIT_RANDOM_STATE, run
 
 
 def test_run_produces_report_with_all_expected_keys():
@@ -14,5 +14,8 @@ def test_run_produces_report_with_all_expected_keys():
     assert "reliability_bins" in report
     assert "threshold_sweep" in report
     assert "best_threshold" in report
-    assert report["held_out_random_state"] == HELD_OUT_RANDOM_STATE
-    assert HELD_OUT_RANDOM_STATE != 42  # must differ from train_model.py's training random_state
+    assert report["held_out_random_state"] == HELD_OUT_SPLIT_RANDOM_STATE
+    # Must differ from train_model.py's data-generation random_state (42) —
+    # expresses that the held-out split is independent of that seed, i.e. a
+    # genuine train/held-out split rather than a coincidental reuse of it.
+    assert HELD_OUT_SPLIT_RANDOM_STATE != 42

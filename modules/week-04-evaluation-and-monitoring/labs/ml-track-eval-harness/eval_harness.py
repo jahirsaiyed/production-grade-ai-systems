@@ -8,7 +8,6 @@ import json
 from pathlib import Path
 
 import numpy as np
-from sklearn.datasets import make_classification
 
 from app.adapters.model_store import load_model
 from app.domain.scoring import score_transaction
@@ -20,22 +19,20 @@ LAB_DIR = Path(__file__).parent
 ARTIFACT_DIR = LAB_DIR / "artifacts"
 EVAL_REPORT_PATH = LAB_DIR / "eval_report.json"
 
-# Deliberately different from train_model.py's random_state=42 — this is what
-# makes this a genuine held-out evaluation set, not a re-test on training data.
-HELD_OUT_RANDOM_STATE = 123
+# The random_state train_model.py used to split its single rs=42 dataset into
+# a training portion and this held-out portion — independent of the
+# data-generation seed (42), and expresses that the split is separate from
+# training, NOT that this is a different classification problem.
+HELD_OUT_SPLIT_RANDOM_STATE = 7
 
 
 def run() -> dict:
     loaded = load_model(ARTIFACT_DIR)
     model = loaded.model
 
-    X, y = make_classification(
-        n_samples=2000,
-        n_features=6,
-        n_informative=4,
-        weights=[0.9, 0.1],
-        random_state=HELD_OUT_RANDOM_STATE,
-    )
+    held_out = json.loads((ARTIFACT_DIR / "held_out.json").read_text())
+    X = np.array(held_out["X"])
+    y = np.array(held_out["y"])
 
     # Score through the exact same domain function the production service
     # uses (app/domain/scoring.py's score_transaction), not a shortcut — this
@@ -61,7 +58,7 @@ def run() -> dict:
         "reliability_bins": reliability_bins,
         "threshold_sweep": threshold_sweep,
         "best_threshold": chosen_threshold,
-        "held_out_random_state": HELD_OUT_RANDOM_STATE,
+        "held_out_random_state": HELD_OUT_SPLIT_RANDOM_STATE,
         "n_samples": len(y),
     }
 

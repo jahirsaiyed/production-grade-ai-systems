@@ -13,4 +13,4 @@ gate:
 	python gate.py
 
 test:
-	pytest --cov=. --cov-report=term-missing --cov-config=.coveragerc
+	pytest --cov=. --cov-report=term-missing --cov-config=.coveragerc --cov-fail-under=80
