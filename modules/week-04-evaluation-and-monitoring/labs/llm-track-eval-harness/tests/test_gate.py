@@ -1,0 +1,26 @@
+import json
+from pathlib import Path
+
+from eval_harness import run
+from gate import check_gate
+
+
+def test_gate_passes_against_this_labs_own_baseline():
+    baseline = json.loads(
+        (Path(__file__).parent.parent / "baseline_metrics.json").read_text()
+    )
+    report = run()
+
+    result = check_gate(report, baseline)
+
+    assert result.passed, result.failures
+
+
+def test_gate_fails_when_citation_match_rate_is_below_baseline():
+    report = {"metrics": {"citation_match_rate": 0.2}}
+    baseline = {"citation_match_rate": 0.75}
+
+    result = check_gate(report, baseline)
+
+    assert result.passed is False
+    assert "citation_match_rate" in result.failures[0]
