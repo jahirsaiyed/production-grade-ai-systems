@@ -90,7 +90,7 @@ def main(
         "metrics": metrics,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
-    manifest_path.write_text(json.dumps(manifest, indent=2))
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(
         f"Run {run_id} tracked at {tracking_uri}. "
         f"Reproducibility manifest written to {manifest_path}"
