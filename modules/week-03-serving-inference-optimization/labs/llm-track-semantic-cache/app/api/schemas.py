@@ -16,3 +16,4 @@ class AskResponse(BaseModel):
     answer: str
     citations: list[Citation]
     source: str
+    cache_hit: bool

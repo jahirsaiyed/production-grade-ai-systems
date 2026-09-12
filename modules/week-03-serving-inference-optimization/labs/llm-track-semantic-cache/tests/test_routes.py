@@ -63,3 +63,20 @@ def test_ask_falls_back_gracefully_when_embedding_call_fails():
     body = response.json()
     assert body["answer"] == "The assistant is temporarily unavailable. Please try again."
     assert body["citations"] == []
+
+
+def test_ask_returns_cache_hit_false_on_first_call():
+    with TestClient(app) as client:
+        response = client.post(
+            "/ask", json={"question": "How many vacation days do I get?"}
+        )
+    assert response.json()["cache_hit"] is False
+
+
+def test_ask_returns_cache_hit_true_on_repeated_identical_question():
+    with TestClient(app) as client:
+        client.post("/ask", json={"question": "How many vacation days do I get?"})
+        response = client.post(
+            "/ask", json={"question": "How many vacation days do I get?"}
+        )
+    assert response.json()["cache_hit"] is True

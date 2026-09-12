@@ -27,6 +27,17 @@ def ask(payload: AskRequest, request: Request) -> AskResponse:
             answer="The assistant is temporarily unavailable. Please try again.",
             citations=[],
             source="mock" if state.embedding_client.is_mock else "llm",
+            cache_hit=False,
+        )
+
+    cached = state.semantic_cache.lookup(query_vector)
+    if cached is not None:
+        return AskResponse(
+            question=payload.question,
+            answer=cached.answer,
+            citations=[Citation(**c) for c in cached.citations],
+            source="mock" if state.llm_client.is_mock else "llm",
+            cache_hit=True,
         )
 
     bm25_scores = list(
@@ -46,13 +57,15 @@ def ask(payload: AskRequest, request: Request) -> AskResponse:
         )
         answer = "The assistant is temporarily unavailable. Please try again."
 
-    citations = [Citation(**c) for c in build_citations(retrieved)]
+    citation_dicts = build_citations(retrieved)
+    state.semantic_cache.store(query_vector, answer, citation_dicts)
 
     return AskResponse(
         question=payload.question,
         answer=answer,
-        citations=citations,
+        citations=[Citation(**c) for c in citation_dicts],
         source="mock" if state.llm_client.is_mock else "llm",
+        cache_hit=False,
     )
 
 
