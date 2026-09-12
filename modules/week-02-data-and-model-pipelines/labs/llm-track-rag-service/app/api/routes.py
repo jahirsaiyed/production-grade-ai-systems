@@ -2,6 +2,7 @@ import logging
 
 from fastapi import APIRouter, Request
 
+from app.adapters.embeddings import EmbeddingCallError
 from app.adapters.llm_client import LlmCallError
 from app.api.schemas import AskRequest, AskResponse, Citation
 from app.domain.rag import build_citations, build_rag_prompt
@@ -14,7 +15,19 @@ logger = logging.getLogger(__name__)
 @router.post("/ask", response_model=AskResponse)
 def ask(payload: AskRequest, request: Request) -> AskResponse:
     state = request.app.state
-    query_vector = state.embedding_client.embed(payload.question)
+    try:
+        query_vector = state.embedding_client.embed(payload.question)
+    except EmbeddingCallError as exc:
+        logger.warning(
+            f"embedding call failed after retries, serving fallback answer: {exc}"
+        )
+        return AskResponse(
+            question=payload.question,
+            answer="The assistant is temporarily unavailable. Please try again.",
+            citations=[],
+            source="mock" if state.embedding_client.is_mock else "llm",
+        )
+
     bm25_scores = list(
         state.bm25_index.get_scores(payload.question.lower().split())
     )

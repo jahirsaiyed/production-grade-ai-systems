@@ -1,7 +1,10 @@
 import hashlib
+import logging
 
 import numpy as np
 from tenacity import retry, stop_after_attempt, wait_fixed
+
+logger = logging.getLogger(__name__)
 
 MOCK_EMBEDDING_DIM = 64
 
@@ -43,4 +46,5 @@ class EmbeddingClient:
             )
             return np.array(response.data[0].embedding)
         except Exception as exc:
+            logger.warning("embedding call failed, will retry if attempts remain")
             raise EmbeddingCallError(str(exc)) from exc
