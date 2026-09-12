@@ -64,3 +64,68 @@ def test_score_returns_503_when_feature_store_unavailable():
             )
     assert response.status_code == 503
     assert "detail" in response.json()
+
+
+def test_score_batch_returns_results_for_all_transactions():
+    with TestClient(app) as client:
+        response = client.post(
+            "/score/batch",
+            json={
+                "transactions": [
+                    {
+                        "transaction_id": "txn-1",
+                        "amount": 10.0,
+                        "merchant_category": "electronics",
+                    },
+                    {
+                        "transaction_id": "txn-2",
+                        "amount": 20.0,
+                        "merchant_category": "groceries",
+                    },
+                ]
+            },
+        )
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["results"]) == 2
+    assert body["results"][0]["transaction_id"] == "txn-1"
+    assert body["results"][1]["transaction_id"] == "txn-2"
+
+
+def test_score_batch_returns_503_when_feature_store_unavailable():
+    with TestClient(app) as client:
+        with patch(
+            "app.api.routes.fetch_features",
+            side_effect=FeatureStoreUnavailable("simulated outage"),
+        ):
+            response = client.post(
+                "/score/batch",
+                json={
+                    "transactions": [
+                        {
+                            "transaction_id": "txn-1",
+                            "amount": 10.0,
+                            "merchant_category": "electronics",
+                        }
+                    ]
+                },
+            )
+    assert response.status_code == 503
+
+
+def test_score_batch_rejects_more_than_1000_transactions():
+    with TestClient(app) as client:
+        response = client.post(
+            "/score/batch",
+            json={
+                "transactions": [
+                    {
+                        "transaction_id": f"txn-{i}",
+                        "amount": 1.0,
+                        "merchant_category": "electronics",
+                    }
+                    for i in range(1001)
+                ]
+            },
+        )
+    assert response.status_code == 422

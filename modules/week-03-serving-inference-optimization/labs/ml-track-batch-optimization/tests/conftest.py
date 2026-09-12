@@ -10,7 +10,7 @@ from app.adapters.model_store import _sha256_of
 
 class _StubModel:
     def predict_proba(self, X):
-        return [[0.9, 0.1]]
+        return [[0.9, 0.1] for _ in X]
 
 
 _artifact_dir = Path(tempfile.mkdtemp(prefix="ml-lab-test-artifacts-"))
