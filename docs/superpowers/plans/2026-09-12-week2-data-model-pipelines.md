@@ -360,7 +360,7 @@ def test_main_logs_expected_metrics_and_writes_manifest(tmp_path):
     assert 0.0 <= manifest["metrics"]["accuracy"] <= 1.0
     assert len(manifest["data_digest"]) == 64
     assert len(manifest["env_lock"]) == 64
-    assert manifest["artifact_uri"].startswith(tracking_uri.replace("file:", "file://"))
+    assert manifest["artifact_uri"].startswith(tracking_uri)
 ```
 
 - [ ] **Step 3: Run test to verify it fails**
