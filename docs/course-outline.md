@@ -76,7 +76,7 @@
 
 *Live demo: make the assistant faster and cheaper, proven with benchmarks.*
 
-**Status in this repo: skeleton only — see `modules/week-03-serving-inference-optimization/`.**
+**Status in this repo: fully built — see `modules/week-03-serving-inference-optimization/`.**
 
 ## Week 4 — Evaluation and Monitoring
 **Evaluating Production AI**

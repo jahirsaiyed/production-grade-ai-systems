@@ -38,7 +38,7 @@ your schedule.
 |---|---|---|
 | 1 | [From Prototype to Production](modules/week-01-prototype-to-production/README.md) | Fully built |
 | 2 | [Data and Model Pipelines](modules/week-02-data-and-model-pipelines/README.md) | Fully built |
-| 3 | [Serving, Inference, and Optimization](modules/week-03-serving-inference-optimization/README.md) | Coming soon |
+| 3 | [Serving, Inference, and Optimization](modules/week-03-serving-inference-optimization/README.md) | Fully built |
 | 4 | [Evaluation and Monitoring](modules/week-04-evaluation-and-monitoring/README.md) | Coming soon |
 | 5 | [Security and Governance](modules/week-05-security-and-governance/README.md) | Coming soon |
 | 6 | [Scaling](modules/week-06-scaling/README.md) | Coming soon |
