@@ -1,7 +1,7 @@
-# ML Track Lab: Fraud Detection
+# ML Track Lab: Batch Optimization
 
 Turns a notebook script into a layered, containerized, versioned FastAPI
-service. Companion to [Week 1's concept README](../../README.md).
+service. Companion to [Week 3's concept README](../../README.md).
 
 ## Before: the prototype
 
@@ -17,8 +17,8 @@ python prototype.py
 ```
 app/
 ├── main.py         # wiring: logging, middleware, routes, model loading
-├── api/             # request/response schemas + routes (POST /score)
-├── domain/          # scoring.py — pure, framework-free business logic
+├── api/             # request/response schemas + routes (POST /score, POST /score/batch)
+├── domain/          # scoring.py + batch_scoring.py — pure, framework-free business logic
 └── adapters/        # model_store.py (versioned artifact loading),
                       # feature_store.py (simulated flaky dependency + retries)
 ```
@@ -43,6 +43,12 @@ Try it:
 curl -X POST http://localhost:8000/score \
   -H "Content-Type: application/json" \
   -d '{"transaction_id": "txn-1", "amount": 42.50, "merchant_category": "electronics"}'
+curl -X POST http://localhost:8000/score/batch \
+  -H "Content-Type: application/json" \
+  -d '{"transactions": [
+        {"transaction_id": "txn-1", "amount": 42.50, "merchant_category": "electronics"},
+        {"transaction_id": "txn-2", "amount": 9.99, "merchant_category": "groceries"}
+      ]}'
 curl http://localhost:8000/healthz
 curl http://localhost:8000/readyz
 ```
@@ -78,8 +84,14 @@ make benchmark
 This measures the throughput win from batching: a single vectorized call to the
 model's `predict_proba` over all 100 feature vectors (converted internally to a
 numpy array) vs. 100 separate single-row calls. The speedup comes from amortizing
-the per-call overhead (feature fetch, FastAPI request handling, model invocation
-serialization) across the entire batch.
+the per-call overhead (FastAPI request handling and model invocation serialization)
+across the entire batch, plus the vectorized `predict_proba` call itself.
+
+Note: per-transaction feature fetching is deliberately **not** batched in this
+lab — `app/api/routes.py`'s `/score/batch` handler still calls `fetch_features`
+once per transaction in a loop, so that cost is not amortized. This is a
+realistic limitation worth naming: a production batching layer would typically
+need a batch-capable feature store API too, which is out of scope here.
 
 This is a simplified, deterministic stand-in for real dynamic batching, which
 accumulates concurrent requests over a short wait-time window and processes them

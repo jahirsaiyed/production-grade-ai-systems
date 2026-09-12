@@ -13,11 +13,15 @@ batch size).
 
 ## Exercise 2: Break the semantic cache's threshold on purpose
 
-Lower `SemanticCache`'s `threshold` (in `llm-track-semantic-cache/app/main.py`, where it's
-constructed) to `0.5`, restart the service, and ask two completely unrelated questions back to
-back. **Acceptance criteria:** the second, unrelated question now incorrectly returns
-`cache_hit: true` with the first question's answer — explain why a too-low threshold is worse than
-no cache at all for a real product.
+Lower the threshold to `0.5` — either by changing `DEFAULT_SIMILARITY_THRESHOLD` in
+`llm-track-semantic-cache/app/domain/semantic_cache.py`, or by passing `threshold=0.5` explicitly
+wherever `SemanticCache` is constructed (`app/main.py`) — restart the service, and ask two specific,
+genuinely unrelated questions back to back: "How many vacation days do I get?" followed by "How do
+I roll back a deploy?" (these two don't share enough distinctive tokens to falsely match even at a
+low threshold under the mock embedder, unlike some seemingly-unrelated pairs that can still score
+above a lowered threshold purely from shared stopwords like "the"/"how"/"do"/"i"). **Acceptance
+criteria:** the second question now incorrectly returns `cache_hit: true` with the first question's
+answer — explain why a too-low threshold is worse than no cache at all for a real product.
 
 ## Exercise 3: Measure the semantic cache's memory growth
 

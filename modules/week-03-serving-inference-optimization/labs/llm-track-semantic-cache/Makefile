@@ -16,7 +16,7 @@ benchmark:
 	python benchmark.py
 
 docker-build:
-	docker build -t rag-service .
+	docker build -t semantic-cache-service .
 
 docker-run:
-	docker run --rm -p 8000:8000 -e OPENAI_API_KEY rag-service
+	docker run --rm -p 8000:8000 -e OPENAI_API_KEY semantic-cache-service

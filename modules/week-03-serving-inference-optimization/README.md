@@ -125,10 +125,14 @@ worked.
 match — a cache keyed on embedding similarity returns a cached answer for "How
 do I reset my password?" even when a later question arrives as "password
 reset steps," which an exact-string cache would treat as a complete miss.
+Note: this kind of paraphrase-level match requires real embeddings (a
+configured `OPENAI_API_KEY`). The lab's default mock embedder only reliably
+matches near-identical questions — worth trying both ways yourself.
 `llm-track-semantic-cache/app/domain/semantic_cache.py` implements exactly
-this: it embeds each incoming question, compares it against previously cached
-questions by cosine similarity, and returns the cached answer once similarity
-clears a configured threshold. **Dynamic (or continuous) batching** is the
+this: it compares each incoming question's embedding (computed by the route)
+against previously cached questions by cosine similarity, and returns the
+cached answer once similarity clears a configured threshold. **Dynamic (or
+continuous) batching** is the
 serving-side counterpart on the ML side: instead of scoring one request at a
 time, a server accumulates several concurrent requests and scores them
 together in one model call, amortizing fixed per-call overhead (model

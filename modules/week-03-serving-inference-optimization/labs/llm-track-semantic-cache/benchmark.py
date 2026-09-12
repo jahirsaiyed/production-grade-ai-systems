@@ -3,6 +3,14 @@ Benchmarks semantic-cache hit vs. miss latency and illustrates cost savings.
 
 Run with `make benchmark` or `python benchmark.py`. Uses an in-process TestClient
 so no server needs to be running.
+
+Note on mock mode: with the default mock embedder/LLM client (no `OPENAI_API_KEY`
+configured), both the "LLM call" and the retrieval step are near-free in-process
+stubs — there is no real network latency to save. The measured p50/p95 latency
+delta between a cache hit and a cache miss is therefore small by construction and
+is NOT representative of the real-world speedup a semantic cache provides. Until
+a real `OPENAI_API_KEY` is configured, the illustrative cost-savings estimate below
+is the more meaningful number from this benchmark.
 """
 import time
 
@@ -36,15 +44,17 @@ def main() -> None:
             client.post("/ask", json={"question": REPEATED_QUESTION})
             hit_times.append(time.perf_counter() - start)
 
-    miss_p50 = _percentile(miss_times, 0.5)
-    hit_p50 = _percentile(hit_times, 0.5)
+    miss_p50, miss_p95 = _percentile(miss_times, 0.5), _percentile(miss_times, 0.95)
+    hit_p50, hit_p95 = _percentile(hit_times, 0.5), _percentile(hit_times, 0.95)
     cost_saved = N_TRIALS * ASSUMED_COST_PER_LLM_CALL_USD
 
     report = (
         f"Benchmark: {N_TRIALS} cache-miss vs. cache-hit trials\n"
-        f"{'':20}{'p50 (s)':>12}\n"
-        f"{'cache miss':20}{miss_p50:>12.4f}\n"
-        f"{'cache hit':20}{hit_p50:>12.4f}\n"
+        f"(mock mode: LLM call + retrieval are near-free stubs, so the latency\n"
+        f" delta below is small by construction — see module docstring)\n"
+        f"{'':20}{'p50 (s)':>12}{'p95 (s)':>12}\n"
+        f"{'cache miss':20}{miss_p50:>12.4f}{miss_p95:>12.4f}\n"
+        f"{'cache hit':20}{hit_p50:>12.4f}{hit_p95:>12.4f}\n"
         f"speedup (p50): {miss_p50 / hit_p50:.2f}x\n"
         f"Illustrative cost saved over {N_TRIALS} avoided LLM calls "
         f"(at ${ASSUMED_COST_PER_LLM_CALL_USD}/call): ${cost_saved:.4f}\n"

@@ -13,10 +13,10 @@ run:
 	uvicorn app.main:app --reload
 
 docker-build:
-	docker build -t fraud-detection-service .
+	docker build -t batch-optimization-service .
 
 docker-run:
-	docker run --rm -p 8000:8000 fraud-detection-service
+	docker run --rm -p 8000:8000 batch-optimization-service
 
 benchmark:
 	python benchmark.py

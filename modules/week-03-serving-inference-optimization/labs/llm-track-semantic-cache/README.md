@@ -1,8 +1,7 @@
-# LLM Track Lab: RAG Q&A Service
+# LLM Track Lab: Semantic Cache
 
 Answers questions from a small corpus of company documents, with citations, using hybrid
-BM25 + dense-embedding retrieval. Companion to [Week 2's concept README](../../README.md) and the
-syllabus's Week 2 live demo.
+BM25 + dense-embedding retrieval. Companion to [Week 3's concept README](../../README.md).
 
 ## What's here
 
@@ -12,7 +11,8 @@ ingest.py            # chunks + embeds docs/, builds the versioned retrieval ind
 app/
 ├── main.py           # wiring: logging, middleware, routes, index/client loading
 ├── api/               # routes (POST /ask) + schemas (with Citation)
-├── domain/            # chunking.py, retrieval.py (hybrid search), rag.py (prompt + citations)
+├── domain/            # chunking.py, retrieval.py (hybrid search), rag.py (prompt + citations),
+                        # semantic_cache.py (similarity-based response cache), tokenizing.py
 └── adapters/           # embeddings.py, llm_client.py (both mock-by-default), index_store.py
 artifacts/            # the committed, sha256-verified retrieval index
 ```
@@ -42,7 +42,9 @@ curl http://localhost:8000/readyz
 
 The response's `citations` field names the exact source file and chunk that answered your
 question — built from retrieval metadata, not parsed from the model's own output, so it stays
-accurate even in mock mode.
+accurate even in mock mode. The response also includes a `cache_hit` boolean indicating whether
+the answer came from the semantic cache instead of a fresh retrieval + LLM call — see "Prove it"
+below.
 
 ## Re-ingest after changing the docs
 
