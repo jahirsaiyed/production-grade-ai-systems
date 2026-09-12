@@ -98,7 +98,7 @@
 
 *Live demo: build eval dashboards and a gate that blocks bad releases.*
 
-**Status in this repo: skeleton only — see `modules/week-04-evaluation-and-monitoring/`.**
+**Status in this repo: fully built — see `modules/week-04-evaluation-and-monitoring/`.**
 
 ## Week 5 — Security and Governance
 **Threats, Authentication, and Privacy**
