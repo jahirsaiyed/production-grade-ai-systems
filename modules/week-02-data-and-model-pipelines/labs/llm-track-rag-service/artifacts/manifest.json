@@ -1,0 +1,10 @@
+{
+  "artifact_version": "0.1.0",
+  "created_at": "2026-09-12T03:18:15.513279+00:00",
+  "git_commit": "e0bf58998debe274f3d319380fd2af27c296658d",
+  "sha256": "092663b0f66269bb82061876d1c5ad7f75006460c0dc7ffa7b01aeccbaff15ab",
+  "python_version": "3.12.10",
+  "key_dependencies": {
+    "rank-bm25": "0.2.2"
+  }
+}
