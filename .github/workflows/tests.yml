@@ -9,13 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        lab:
-          - modules/week-01-prototype-to-production/labs/ml-track-fraud-detection
-          - modules/week-01-prototype-to-production/labs/llm-track-qa-service
-          - modules/week-02-data-and-model-pipelines/labs/llm-track-rag-service
+        include:
+          - dir: modules/week-01-prototype-to-production/labs/ml-track-fraud-detection
+            cov: app
+          - dir: modules/week-01-prototype-to-production/labs/llm-track-qa-service
+            cov: app
+          - dir: modules/week-02-data-and-model-pipelines/labs/llm-track-rag-service
+            cov: app
+          - dir: modules/week-02-data-and-model-pipelines/labs/ml-track-experiment-tracking
+            cov: .
     defaults:
       run:
-        working-directory: ${{ matrix.lab }}
+        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v4
 
@@ -30,4 +35,4 @@ jobs:
         run: ruff check .
 
       - name: Run tests with coverage
-        run: pytest --cov=app --cov-report=term-missing --cov-fail-under=80
+        run: pytest --cov=${{ matrix.cov }} --cov-report=term-missing --cov-fail-under=80

@@ -6,6 +6,7 @@ from pathlib import Path
 from app.adapters.embeddings import EmbeddingClient
 from app.adapters.index_store import _sha256_of
 from app.domain.chunking import chunk_text
+from app.domain.tokenizing import tokenize
 
 _artifact_dir = Path(tempfile.mkdtemp(prefix="rag-lab-test-artifacts-"))
 
@@ -15,7 +16,7 @@ _chunks = chunk_text(
     source="hr-policy.md",
 )
 _dense_vectors = [_client.embed(c.text).tolist() for c in _chunks]
-_tokenized_corpus = [c.text.lower().split() for c in _chunks]
+_tokenized_corpus = [tokenize(c.text) for c in _chunks]
 
 _payload = {
     "chunks": [

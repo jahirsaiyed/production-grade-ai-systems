@@ -7,6 +7,7 @@ from app.adapters.llm_client import LlmCallError
 from app.api.schemas import AskRequest, AskResponse, Citation
 from app.domain.rag import build_citations, build_rag_prompt
 from app.domain.retrieval import hybrid_search
+from app.domain.tokenizing import tokenize
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ def ask(payload: AskRequest, request: Request) -> AskResponse:
         )
 
     bm25_scores = list(
-        state.bm25_index.get_scores(payload.question.lower().split())
+        state.bm25_index.get_scores(tokenize(payload.question))
     )
 
     retrieved = hybrid_search(

@@ -29,7 +29,7 @@ def _sha256_of(path: Path) -> str:
 def load_index(artifact_dir: Path) -> LoadedIndex:
     manifest_path = artifact_dir / "manifest.json"
     index_path = artifact_dir / "index.json"
-    manifest = json.loads(manifest_path.read_text())
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
     actual_sha256 = _sha256_of(index_path)
     if actual_sha256 != manifest["sha256"]:
@@ -38,7 +38,7 @@ def load_index(artifact_dir: Path) -> LoadedIndex:
             f"manifest sha256 {manifest['sha256']}"
         )
 
-    payload = json.loads(index_path.read_text())
+    payload = json.loads(index_path.read_text(encoding="utf-8"))
     chunks = [
         Chunk(text=c["text"], source=c["source"], chunk_id=c["chunk_id"])
         for c in payload["chunks"]

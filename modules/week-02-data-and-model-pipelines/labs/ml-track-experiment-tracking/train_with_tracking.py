@@ -28,7 +28,7 @@ REQUIREMENTS_PATH = LAB_DIR / "requirements.txt"
 def _git_commit() -> str:
     try:
         return subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], text=True
+            ["git", "rev-parse", "HEAD"], text=True, cwd=LAB_DIR
         ).strip()
     except Exception:
         return "unknown"

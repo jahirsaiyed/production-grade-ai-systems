@@ -54,7 +54,7 @@
 
 *Live demo: build a RAG pipeline that answers from company docs with citations.*
 
-**Status in this repo: skeleton only — see `modules/week-02-data-and-model-pipelines/`.**
+**Status in this repo: fully built — see `modules/week-02-data-and-model-pipelines/`.**
 
 ## Week 3 — Serving, Inference, and Optimization
 **Serving Architecture**
