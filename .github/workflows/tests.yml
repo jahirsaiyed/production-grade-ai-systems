@@ -22,6 +22,10 @@ jobs:
             cov: app
           - dir: modules/week-03-serving-inference-optimization/labs/llm-track-semantic-cache
             cov: app
+          - dir: modules/week-04-evaluation-and-monitoring/labs/ml-track-eval-harness
+            cov: .
+          - dir: modules/week-04-evaluation-and-monitoring/labs/llm-track-eval-harness
+            cov: app
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
