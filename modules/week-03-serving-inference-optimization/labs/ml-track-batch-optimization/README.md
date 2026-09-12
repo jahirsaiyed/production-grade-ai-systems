@@ -75,10 +75,11 @@ over 30 trials, printing p50/p95 latency for each:
 make benchmark
 ```
 
-This measures the throughput win from batching: calling the model's `predict_proba`
-once across all 100 rows as a single pandas DataFrame vs. 100 separate Python-level
-calls. The speedup comes from amortizing the per-call overhead (feature fetch, FastAPI
-request handling, model invocation serialization) across the entire batch.
+This measures the throughput win from batching: a single vectorized call to the
+model's `predict_proba` over all 100 feature vectors (converted internally to a
+numpy array) vs. 100 separate single-row calls. The speedup comes from amortizing
+the per-call overhead (feature fetch, FastAPI request handling, model invocation
+serialization) across the entire batch.
 
 This is a simplified, deterministic stand-in for real dynamic batching, which
 accumulates concurrent requests over a short wait-time window and processes them

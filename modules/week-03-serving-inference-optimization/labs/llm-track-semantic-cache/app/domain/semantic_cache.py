@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+DEFAULT_SIMILARITY_THRESHOLD = 0.95
+
 
 @dataclass(frozen=True)
 class CachedAnswer:
@@ -24,7 +26,7 @@ def _cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 
 
 class SemanticCache:
-    def __init__(self, threshold: float = 0.95):
+    def __init__(self, threshold: float = DEFAULT_SIMILARITY_THRESHOLD):
         self._threshold = threshold
         self._entries: list[_CacheEntry] = []
 

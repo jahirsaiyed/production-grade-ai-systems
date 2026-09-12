@@ -55,7 +55,14 @@ def ask(payload: AskRequest, request: Request) -> AskResponse:
         logger.warning(
             f"llm call failed after retries, serving fallback answer: {exc}"
         )
-        answer = "The assistant is temporarily unavailable. Please try again."
+        citations = [Citation(**c) for c in build_citations(retrieved)]
+        return AskResponse(
+            question=payload.question,
+            answer="The assistant is temporarily unavailable. Please try again.",
+            citations=citations,
+            source="mock" if state.llm_client.is_mock else "llm",
+            cache_hit=False,
+        )
 
     citation_dicts = build_citations(retrieved)
     state.semantic_cache.store(query_vector, answer, citation_dicts)

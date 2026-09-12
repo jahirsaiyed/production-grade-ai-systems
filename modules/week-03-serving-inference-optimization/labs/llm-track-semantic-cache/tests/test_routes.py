@@ -80,3 +80,30 @@ def test_ask_returns_cache_hit_true_on_repeated_identical_question():
             "/ask", json={"question": "How many vacation days do I get?"}
         )
     assert response.json()["cache_hit"] is True
+
+
+def test_ask_does_not_cache_fallback_answer_after_llm_failure():
+    with TestClient(app) as client:
+        with patch.object(
+            client.app.state.llm_client,
+            "complete",
+            side_effect=LlmCallError("boom"),
+        ):
+            first_response = client.post(
+                "/ask", json={"question": "What is our parental leave policy?"}
+            )
+        assert (
+            first_response.json()["answer"]
+            == "The assistant is temporarily unavailable. Please try again."
+        )
+        assert first_response.json()["cache_hit"] is False
+
+        second_response = client.post(
+            "/ask", json={"question": "What is our parental leave policy?"}
+        )
+
+    body = second_response.json()
+    assert body["cache_hit"] is False
+    assert (
+        body["answer"] != "The assistant is temporarily unavailable. Please try again."
+    )
