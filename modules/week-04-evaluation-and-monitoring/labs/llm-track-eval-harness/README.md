@@ -54,3 +54,8 @@ make judge
   Exercise 4 to see the check actually catch something when you deliberately break it.
 - `gate.py`'s `check_gate()` is asserted directly in `tests/test_gate.py` — the normal `pytest` run
   this repo's CI already executes for every lab IS the release gate.
+- `baseline_metrics.json`'s `citation_match_rate: 0.80` minimum was chosen after measuring a genuine
+  1.00 (8/8) on this lab's committed index — not by guessing. With only 8 labeled examples, achievable
+  rates are always a multiple of 0.125, so 0.80 is a threshold (not a predicted score): it sits strictly
+  between 0.75 and 0.875, meaning one single-question regression still passes as noise while a
+  two-question regression correctly fails the gate.
