@@ -4,6 +4,8 @@ import logging
 import numpy as np
 from tenacity import retry, stop_after_attempt, wait_fixed
 
+from app.domain.tokenizing import tokenize
+
 logger = logging.getLogger(__name__)
 
 MOCK_EMBEDDING_DIM = 64
@@ -15,7 +17,7 @@ class EmbeddingCallError(RuntimeError):
 
 def _mock_embed(text: str) -> np.ndarray:
     vector = np.zeros(MOCK_EMBEDDING_DIM)
-    for word in text.lower().split():
+    for word in tokenize(text):
         digest = hashlib.sha256(word.encode("utf-8")).digest()
         index = int.from_bytes(digest[:4], "big") % MOCK_EMBEDDING_DIM
         vector[index] += 1.0
