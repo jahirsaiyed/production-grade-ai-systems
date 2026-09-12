@@ -77,3 +77,22 @@ make docker-run
   and documented there.
 - `app/domain/retrieval.py`'s combined BM25+dense score is a simplified stand-in for a real
   cross-encoder reranker — good enough to demonstrate hybrid retrieval, not state-of-the-art.
+
+## Prove it: semantic-cache benchmark
+
+```bash
+make benchmark
+```
+
+Measures the latency of a cache miss (a brand-new question, requiring retrieval + an LLM call)
+vs. a cache hit (a repeated question, answered immediately from the cache) and reports the
+speedup ratio (p50 latency).
+
+It also prints an illustrative cost estimate for the number of LLM calls avoided — genuinely
+meaningful once a real `OPENAI_API_KEY` is configured, since a cache hit skips the real API
+call entirely.
+
+**Important:** The cache is in-memory and per-process, not persisted — restarting the service
+clears it. This is a deliberate simplification for this lab, not a production-ready cache store.
+See the Week 3 concept README's "semantic caching" section and Exercise 3 for discussion of
+production cache architectures.

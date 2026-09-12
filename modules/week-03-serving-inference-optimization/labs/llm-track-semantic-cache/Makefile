@@ -1,4 +1,4 @@
-.PHONY: setup ingest test run docker-build docker-run
+.PHONY: setup ingest test run benchmark docker-build docker-run
 
 setup:
 	pip install -r requirements.txt
@@ -11,6 +11,9 @@ test:
 
 run:
 	uvicorn app.main:app --reload
+
+benchmark:
+	python benchmark.py
 
 docker-build:
 	docker build -t rag-service .
