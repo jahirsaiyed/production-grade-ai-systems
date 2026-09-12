@@ -18,6 +18,10 @@ jobs:
             cov: app
           - dir: modules/week-02-data-and-model-pipelines/labs/ml-track-experiment-tracking
             cov: .
+          - dir: modules/week-03-serving-inference-optimization/labs/ml-track-batch-optimization
+            cov: app
+          - dir: modules/week-03-serving-inference-optimization/labs/llm-track-semantic-cache
+            cov: app
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
