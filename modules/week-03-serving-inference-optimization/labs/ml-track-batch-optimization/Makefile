@@ -1,4 +1,4 @@
-.PHONY: setup train test run docker-build docker-run
+.PHONY: setup train test run docker-build docker-run benchmark
 
 setup:
 	pip install -r requirements.txt
@@ -17,3 +17,6 @@ docker-build:
 
 docker-run:
 	docker run --rm -p 8000:8000 fraud-detection-service
+
+benchmark:
+	python benchmark.py
