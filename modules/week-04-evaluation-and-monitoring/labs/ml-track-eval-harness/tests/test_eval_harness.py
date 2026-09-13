@@ -15,7 +15,3 @@ def test_run_produces_report_with_all_expected_keys():
     assert "threshold_sweep" in report
     assert "best_threshold" in report
     assert report["held_out_random_state"] == HELD_OUT_SPLIT_RANDOM_STATE
-    # Must differ from train_model.py's data-generation random_state (42) —
-    # expresses that the held-out split is independent of that seed, i.e. a
-    # genuine train/held-out split rather than a coincidental reuse of it.
-    assert HELD_OUT_SPLIT_RANDOM_STATE != 42

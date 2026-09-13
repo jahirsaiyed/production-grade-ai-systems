@@ -14,16 +14,11 @@ from app.domain.scoring import score_transaction
 from calibration import compute_brier_score, reliability_diagram_data
 from metrics import compute_classification_metrics
 from threshold_selection import best_threshold, sweep_thresholds
+from train_model import HELD_OUT_SPLIT_RANDOM_STATE
 
 LAB_DIR = Path(__file__).parent
 ARTIFACT_DIR = LAB_DIR / "artifacts"
 EVAL_REPORT_PATH = LAB_DIR / "eval_report.json"
-
-# The random_state train_model.py used to split its single rs=42 dataset into
-# a training portion and this held-out portion — independent of the
-# data-generation seed (42), and expresses that the split is separate from
-# training, NOT that this is a different classification problem.
-HELD_OUT_SPLIT_RANDOM_STATE = 7
 
 
 def run() -> dict:

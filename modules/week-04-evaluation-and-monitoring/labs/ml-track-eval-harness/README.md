@@ -10,7 +10,7 @@ on regression.
 ```
 app/domain/scoring.py       # reused from Week 1 unchanged — the SAME scoring function production uses
 app/adapters/model_store.py # reused from Week 1 unchanged — sha256-verified model loading
-train_model.py               # reused from Week 1 unchanged — trains this lab's own model
+train_model.py               # adapted from Week 1 — same model, plus the train/held-out split this lab evaluates against
 metrics.py                    # precision/recall/F1/ROC-AUC/PR-AUC
 calibration.py                  # reliability diagram data + Brier score
 threshold_selection.py           # cost-based threshold sweep
@@ -66,8 +66,8 @@ make test    # runs pytest, which includes the gate check as a normal assertion
   held-out split) — few transactions cross 0.5, so recall in particular is weak. This is the
   specific, disclosed limitation of evaluating at one fixed operating point: `threshold_selection.py`'s
   cost-based sweep picks a much lower threshold (`~0.05`) as cheaper overall given `cost_fn=25.0`.
-  `baseline_metrics.json` is set ~0.05 below each actual measured value (clamped to `[0, 1]`) — a
-  genuine regression gate derived from a real run, not an arbitrary guess. It illustrates a real
+  `baseline_metrics.json` is set ~0.05 below each actual measured value — a genuine regression gate
+  derived from a real run, not an arbitrary guess. It illustrates a real
   lesson: a model's threshold-independent discrimination (ROC-AUC/PR-AUC) can look reasonable while
   its precision/recall at a naively-chosen fixed threshold are weak — exactly the kind of gap an
   offline evaluation harness like this one, paired with cost-based threshold selection, exists to
