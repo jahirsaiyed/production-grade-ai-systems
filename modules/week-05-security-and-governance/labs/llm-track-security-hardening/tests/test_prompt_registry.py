@@ -1,7 +1,5 @@
 import json
 
-import pytest
-
 from app.adapters.prompt_registry import get_active_prompt, validate_registry
 
 

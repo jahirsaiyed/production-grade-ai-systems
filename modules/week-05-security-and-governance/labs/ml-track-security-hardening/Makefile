@@ -1,4 +1,4 @@
-.PHONY: setup train model-card fairness-audit test run docker-build docker-run
+.PHONY: setup train model-card fairness-audit test lint run docker-build docker-run
 
 setup:
 	pip install -r requirements.txt
@@ -14,6 +14,9 @@ fairness-audit:
 
 test:
 	pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --cov-config=.coveragerc
+
+lint:
+	ruff check .
 
 run:
 	uvicorn app.main:app --reload

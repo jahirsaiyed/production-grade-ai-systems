@@ -3,6 +3,7 @@ import io
 import json
 
 import joblib
+import pytest
 from cryptography.fernet import Fernet
 
 from app.adapters.model_store import ArtifactIntegrityError, load_model
@@ -49,11 +50,8 @@ def test_load_model_raises_on_tampered_ciphertext(tmp_path):
     corrupted[0] ^= 0xFF
     model_path.write_bytes(bytes(corrupted))
 
-    try:
+    with pytest.raises(ArtifactIntegrityError):
         load_model(tmp_path, key)
-        assert False, "expected ArtifactIntegrityError"
-    except ArtifactIntegrityError:
-        pass
 
 
 def test_load_model_raises_on_wrong_key(tmp_path):
@@ -61,8 +59,5 @@ def test_load_model_raises_on_wrong_key(tmp_path):
     key_b = Fernet.generate_key()
     _write_encrypted_artifact(tmp_path, key_a)
 
-    try:
+    with pytest.raises(ArtifactIntegrityError):
         load_model(tmp_path, key_b)
-        assert False, "expected ArtifactIntegrityError"
-    except ArtifactIntegrityError:
-        pass

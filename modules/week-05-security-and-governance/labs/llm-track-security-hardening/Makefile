@@ -1,4 +1,4 @@
-.PHONY: setup ingest test run docker-build docker-run
+.PHONY: setup ingest test lint run docker-build docker-run
 
 setup:
 	pip install -r requirements.txt
@@ -8,6 +8,9 @@ ingest:
 
 test:
 	pytest --cov=app --cov-report=term-missing --cov-fail-under=80 --cov-config=.coveragerc
+
+lint:
+	ruff check .
 
 run:
 	uvicorn app.main:app --reload

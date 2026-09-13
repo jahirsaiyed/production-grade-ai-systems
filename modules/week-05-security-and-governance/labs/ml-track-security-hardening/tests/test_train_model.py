@@ -1,6 +1,5 @@
 import json
 
-import joblib
 from cryptography.fernet import Fernet
 
 from app.adapters.model_store import load_model
