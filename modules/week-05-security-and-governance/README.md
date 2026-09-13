@@ -84,7 +84,13 @@ structured-output contract; both labs' `app/adapters/audit_log.py` implement
 the audit-logging side. As it stands today, that logging covers served (200)
 responses only — a request rejected by auth (401), blocked by the
 prompt-injection guardrail (400), or failing the output guardrail (500) never
-reaches the `log_decision` call, so none of those get a log entry. That's a
+reaches the `log_decision` call in the LLM lab, and in the ML lab a `503`
+raised when the feature store is unavailable (`FeatureStoreUnavailable` in
+`ml-track-security-hardening/app/api/routes.py`, simulated by default at a
+20% failure rate via `feature_store_failure_rate` in that lab's `config.py`)
+never reaches `log_decision` either — making it the single most likely
+non-200 a learner will hit in the ML lab. None of those get a log entry.
+That's a
 disclosed gap, not a design goal: a real production system would want to log
 attempted-but-blocked requests too, since a spike in rejected requests is
 itself a valuable security signal, and closing this gap is left as future

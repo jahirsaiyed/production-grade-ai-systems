@@ -17,11 +17,11 @@ editor, or `python -c "p=open('artifacts/model.joblib.enc','r+b'); p.seek(10); b
 then try to start the service (`make run`). **Acceptance criteria:** the service fails to start
 with an `ArtifactIntegrityError` (fail-fast, not a silent fallback) — regenerate a working artifact
 afterward with `make train` before moving on. Do **not** run `git checkout -- artifacts/model.joblib.enc`
-to "restore" it: the committed artifact is encrypted with a key that was never published, so by this
-point in the lab you've already overwritten it with your own `MODEL_ENCRYPTION_KEY`'s version via
-`make train` in setup — `git checkout` would instead bring back the original author's undecryptable
-artifact, which your own key can't open, permanently breaking the service until you run `make train`
-again.
+to "restore" it: the committed artifact is encrypted with a key that was never published. Separately,
+by this point in the lab you've already overwritten it with your own `MODEL_ENCRYPTION_KEY`'s version
+via `make train` in setup — so `git checkout` would instead bring back the original author's
+undecryptable artifact, which your own key can't open, permanently breaking the service until you run
+`make train` again.
 
 ## Exercise 3: Trigger the prompt-injection guardrail
 
