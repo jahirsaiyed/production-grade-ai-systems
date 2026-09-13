@@ -46,7 +46,11 @@ matters because logs tend to be the leakiest part of a system — they're
 long-lived, widely readable, and rarely audited as carefully as the primary
 data store. This redaction happens only on the path to logging, though, never
 on the path to retrieval: the knowledge base itself is not censored, so
-redaction here protects log readers, not retrieval results.
+redaction here protects log readers, not retrieval results. Redaction is
+scoped to logging only in another sense too: the raw, unredacted question
+is still both sent to the LLM inside the prompt and echoed back verbatim in
+`AskResponse.question` — redacting the prompt itself or the API response
+echo is out of scope this week.
 
 ## Encryption in transit and at rest
 
@@ -77,8 +81,14 @@ return, and audit logging records what happened for later review. The LLM
 lab's `app/domain/guardrails.py` implements the input side (the prompt
 injection check from the threat-landscape section above) and the
 structured-output contract; both labs' `app/adapters/audit_log.py` implement
-the audit-logging side, giving every request a durable record independent of
-whether the request was ultimately allowed or blocked.
+the audit-logging side. As it stands today, that logging covers served (200)
+responses only — a request rejected by auth (401), blocked by the
+prompt-injection guardrail (400), or failing the output guardrail (500) never
+reaches the `log_decision` call, so none of those get a log entry. That's a
+disclosed gap, not a design goal: a real production system would want to log
+attempted-but-blocked requests too, since a spike in rejected requests is
+itself a valuable security signal, and closing this gap is left as future
+work rather than retrofitted here.
 
 ## Groundedness checks
 

@@ -39,6 +39,9 @@ def _git_commit() -> str:
 
 
 def main(artifact_dir: Path = ARTIFACT_DIR) -> None:
+    from dotenv import load_dotenv
+
+    load_dotenv()
     encryption_key = os.environ["MODEL_ENCRYPTION_KEY"].encode()
 
     X, y = make_classification(

@@ -81,6 +81,9 @@ def run(encryption_key: bytes, artifact_dir: Path = ARTIFACT_DIR) -> dict:
 
 
 def main() -> None:
+    from dotenv import load_dotenv
+
+    load_dotenv()
     encryption_key = os.environ["MODEL_ENCRYPTION_KEY"].encode()
     metrics = run(encryption_key)
     print(json.dumps(metrics, indent=2))

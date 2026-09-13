@@ -31,10 +31,10 @@ def test_compute_fairness_metrics_with_no_disparity():
 def test_run_produces_metrics_against_a_freshly_trained_disposable_artifact(tmp_path):
     # run() takes the encryption key as an explicit argument rather than reading
     # the environment itself, so this test builds its own disposable encrypted
-    # artifact under tmp_path — it does not touch or need the real committed
-    # artifact (which needs the actual secret key from Task 5's Step 9, not
-    # available to this test, and shouldn't be needed just to check run()'s
-    # output shape).
+    # artifact under tmp_path — it does not use or need the real committed
+    # artifact's actual encryption key, which is intentionally not published
+    # anywhere in this repo, and shouldn't be needed just to check run()'s
+    # output shape.
     import hashlib
     import io
     import json

@@ -39,6 +39,13 @@ make train           # trains and encrypts this lab's own model artifact
 make run             # starts the service on :8000
 ```
 
+The `artifacts/` committed to this repo is a publication-only demo, encrypted with a key nobody
+outside this task has — it exists so the repo has something to ship, not so you can run it. You
+must `make train` under your own freshly generated `MODEL_ENCRYPTION_KEY` to get an artifact your
+local service can actually decrypt. If you ever run `git checkout -- artifacts/model.joblib.enc` to
+try to "restore" the committed artifact, it will NOT work with your own key — the fix is to run
+`make train` again.
+
 Get a token and call the protected route:
 ```bash
 python -c "from app.api.auth import create_token; print(create_token(subject='learner'))"
