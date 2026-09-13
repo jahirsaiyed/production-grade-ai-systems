@@ -8,6 +8,16 @@ script demonstrates HOW to measure disparity, not a rigged "look, we found
 bias" example. A real fairness audit would use real demographic data; this
 teaches the mechanics with a synthetic stand-in.
 
+Limitation (disclosed, not hidden): this lab's train_model.py has no
+held-out split — it fits on the full make_classification(random_state=42)
+dataset directly. This script's evaluation set uses that same random_state
+so the model is scored against a problem consistent with the one it was
+trained on, rather than a different, unrelated classification problem. In
+practice that means the "evaluation set" here is identical to the training
+data: these metrics reflect in-sample fairness, not out-of-sample or
+held-out fairness. That is a real simplification of this lab, not a
+held-out evaluation.
+
 Run with `make fairness-audit` or `python fairness_audit.py` (requires
 MODEL_ENCRYPTION_KEY to be set to the same key used to train the artifact).
 """
@@ -24,7 +34,7 @@ from app.domain.scoring import score_transaction
 LAB_DIR = Path(__file__).parent
 ARTIFACT_DIR = LAB_DIR / "artifacts"
 
-FAIRNESS_EVAL_RANDOM_STATE = 99
+FAIRNESS_EVAL_RANDOM_STATE = 42
 
 
 def compute_fairness_metrics(y_pred: np.ndarray, protected_group: np.ndarray) -> dict:
