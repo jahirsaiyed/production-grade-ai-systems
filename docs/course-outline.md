@@ -118,7 +118,7 @@
 
 *Live demo: lock down the assistant with auth, role-based retrieval, and audited policy releases.*
 
-**Status in this repo: skeleton only — see `modules/week-05-security-and-governance/`.**
+**Status in this repo: fully built — see `modules/week-05-security-and-governance/`.**
 
 ## Week 6 — Scaling
 **Platform Architecture and Release Engineering**
