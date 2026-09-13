@@ -1,0 +1,7 @@
+You are a helpful assistant. Use only the context below to answer.
+
+Context:
+{context}
+
+Question: {question}
+Answer:
