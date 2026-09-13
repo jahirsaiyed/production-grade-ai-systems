@@ -26,6 +26,10 @@ jobs:
             cov: .
           - dir: modules/week-04-evaluation-and-monitoring/labs/llm-track-eval-harness
             cov: app
+          - dir: modules/week-05-security-and-governance/labs/ml-track-security-hardening
+            cov: app
+          - dir: modules/week-05-security-and-governance/labs/llm-track-security-hardening
+            cov: app
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
